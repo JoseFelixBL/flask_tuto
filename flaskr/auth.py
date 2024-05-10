@@ -1,3 +1,4 @@
+"""Author Blueprint"""
 import functools
 
 from flask import (
@@ -9,11 +10,13 @@ from flaskr.db import get_db
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
+
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
+    """Register author"""
     if request.method == 'POST':
-        username = request.from['username']
-        password = request.from['password']
+        username = request.form['username']
+        password = request.form['password']
         db = get_db()
         error = None
 
@@ -21,7 +24,7 @@ def register():
             error = 'Username is required'
         elif not password:
             error = 'Password is required'
-    
+
         if error is None:
             try:
                 db.execute(
@@ -32,12 +35,14 @@ def register():
             except db.IntegrityError:
                 error = f"User {username} is already registered."
             else:
-                returnredirect(url_for("auth.login"))
+                return redirect(url_for("auth.login"))
         flash(error)
     return render_template('auth/register.html')
-    
+
+
 @bp.route('/login', methods=('GET', 'POST'))
 def login():
+    """Login author"""
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -61,8 +66,10 @@ def login():
 
     return render_template('auth/login.html')
 
+
 @bp.before_app_request
 def load_logged_in_user():
+    """Get user data ready to be shown"""
     user_id = session.get('user_id')
 
     if user_id is None:
@@ -72,12 +79,16 @@ def load_logged_in_user():
             'SELECT * FROM user WHERE id = ?', (user_id,)
         ).fetchone()
 
-@bp.reoute('/logout')
+
+@bp.route('/logout')
 def logout():
+    """Logout"""
     session.clear()
     return redirect(url_for('index'))
 
+
 def login_required(view):
+    """If only author can do, login required"""
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         if g.user is None:

@@ -1,9 +1,11 @@
+"""DB Stuff"""
 import sqlite3
 import click
 from flask import current_app, g
 
 
 def get_db():
+    """Connect to DB"""
     if 'db' not in g:
         g.db = sqlite3.connect(
             current_app.config['DATABASE'],
@@ -15,6 +17,7 @@ def get_db():
 
 
 def close_db(e=None):
+    """Close DB"""
     db = g.pop('db', None)
 
     if db is not None:
@@ -22,6 +25,7 @@ def close_db(e=None):
 
 
 def init_db():
+    """Initialize DB"""
     db = get_db()
 
     with current_app.open_resource('schema.sql') as f:
@@ -36,5 +40,6 @@ def init_db_command():
 
 
 def init_app(app):
+    """Register with the app"""
     app.teardown_appcontext(close_db)
     app.cli.add_command(init_db_command)

@@ -1,4 +1,5 @@
-from flask import(
+"""Blog Blueprint"""
+from flask import (
     Blueprint, flash, g, redirect, render_template, request, url_for
 )
 from werkzeug.exceptions import abort
@@ -8,19 +9,23 @@ from flaskr.db import get_db
 
 bp = Blueprint('blog', __name__)
 
+
 @bp.route('/')
 def index():
+    """Index: list of posts"""
     db = get_db()
     posts = db.execute(
         'SELECT p.id, title, body, created, author_id, username'
         ' FROM post p JOIN user u ON p.author_id = u.id'
         ' ORDER BY created DESC'
     ).fetchall()
-    return render_template('blog/index..html', posts = posts)
+    return render_template('blog/index.html', posts=posts)
+
 
 @bp.route('/create', methods=('GET', 'POST'))
 @login_required
 def create():
+    """Create a new post"""
     if request.method == 'POST':
         title = request.form['title']
         body = request.form['body']
@@ -39,13 +44,15 @@ def create():
                 (title, body, g.user['id'])
             )
             db.commit()
-            return redirect(url_for('blog_index'))
+            return redirect(url_for('blog.index'))
     return render_template('blog/create.html')
 
+
 def get_post(id, check_author=True):
+    """Get post by id, check_author in case of update or delete"""
     post = get_db().execute(
         'SELECT p.id, title, body, created, author_id, username'
-        ' FROM post p JOIN user u ON p.author = u.id'
+        ' FROM post p JOIN user u ON p.author_id = u.id'
         ' WHERE p.id = ?',
         (id,)
     ).fetchone()
@@ -58,9 +65,11 @@ def get_post(id, check_author=True):
 
     return post
 
+
 @bp.route('/<int:id>/update', methods=('GET', 'POST'))
 @login_required
 def update(id):
+    """Update post"""
     post = get_post(id)
 
     if request.method == 'POST':
@@ -85,11 +94,13 @@ def update(id):
 
     return render_template('blog/update.html', post=post)
 
+
 @bp.route('/<int:id>/delete', methods=('POST',))
 @login_required
 def delete(id):
+    """Delete post"""
     get_post(id)
     db = get_db()
     db.execute('DELETE FROM post WHERE id = ?', (id,))
     db.commit()
-    return redirect(yrl_for(''blog.index))
+    return redirect(url_for('blog.index'))
