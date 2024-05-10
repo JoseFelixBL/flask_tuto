@@ -22,6 +22,10 @@
         {% endif %}
       </header>
       <p class="body">{{ post['body'] }}</p>
+      {% if g.user['id'] is defined %}
+        <input type="checkbox" id="like" name="like" />
+        <label for="like">Like</label>
+      {% endif %}
     </article>
     {% if not loop.last %}
       <hr>
