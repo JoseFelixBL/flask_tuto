@@ -17,17 +17,37 @@ def index():
     # 'SELECT p.id, title, body, created, author_id, username'
     # ' FROM post p JOIN user u ON p.author_id = u.id'
     # ' ORDER BY created DESC'
-    posts = db.execute(
-        'SELECT p.id, title, body, created, author_id, username, n_likes'
-        ' FROM post p'
-        ' JOIN user u ON p.author_id = u.id'
-        ' LEFT JOIN v_total_likes ON p.id = post_id'
-    ).fetchall()
+    if g.user == None:
+        posts = db.execute(
+            """SELECT p.id, title, body, created, p.author_id, 
+                username, n_likes
+                FROM post p
+                LEFT JOIN post_like pl ON p.id = pl.post_id
+                JOIN user u ON p.author_id = u.id
+                LEFT JOIN v_total_likes vtl ON p.id = vtl.post_id
+                GROUP BY p.id"""
+        ).fetchall()
+    else:
+        posts = db.execute(
+            """SELECT p.id, title, body, created, p.author_id, 
+                username, n_likes, pl.author_id pl_auth
+                FROM post p
+                LEFT JOIN post_like pl ON p.id = pl.post_id and pl.author_id = ?
+                JOIN user u ON p.author_id = u.id
+                LEFT JOIN v_total_likes vtl ON p.id = vtl.post_id""", (g.user['id'],)
+        ).fetchall()
+    # posts=db.execute(
+    #     'SELECT p.id, title, body, created, author_id, username, n_likes'
+    #     ' FROM post p'
+    #     ' JOIN user u ON p.author_id = u.id'
+    #     ' LEFT JOIN v_total_likes ON p.id = post_id'
+    # ).fetchall()
+    print(g.user)
     return render_template('blog/index.html', posts=posts)
 
 
-@bp.route('/create', methods=('GET', 'POST'))
-@login_required
+@ bp.route('/create', methods=('GET', 'POST'))
+@ login_required
 def create():
     """Create a new post"""
     if request.method == 'POST':
@@ -70,8 +90,8 @@ def get_post(id, check_author=True):
     return post
 
 
-@bp.route('/<int:id>/update', methods=('GET', 'POST'))
-@login_required
+@ bp.route('/<int:id>/update', methods=('GET', 'POST'))
+@ login_required
 def update(id):
     """Update post"""
     post = get_post(id)
@@ -99,15 +119,15 @@ def update(id):
     return render_template('blog/update.html', post=post)
 
 
-@bp.route('/<int:id>/detail', methods=('GET',))
+@ bp.route('/<int:id>/detail', methods=('GET',))
 def detail(id):
     """Detail post"""
     post = get_post(id, check_author=False)
     return render_template('blog/detail.html', post=post)
 
 
-@bp.route('/<int:id>/delete', methods=('POST',))
-@login_required
+@ bp.route('/<int:id>/delete', methods=('POST',))
+@ login_required
 def delete(id):
     """Delete post"""
     get_post(id)

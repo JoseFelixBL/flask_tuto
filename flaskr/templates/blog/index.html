@@ -23,7 +23,11 @@
       </header>
       <p class="body">{{ post['body'] }}</p>
       {% if g.user['id'] is defined %}
-        <input type="checkbox" id="like" name="like" />
+        {% if post['pl_auth'] is not none %}
+          <input type="checkbox" id="like" name="like" checked />
+        {% else %}
+          <input type="checkbox" id="like" name="like" />
+        {% endif %}
         <label for="like">Like</label>
       {% endif %}
       {% if post['n_likes'] is not none %}
