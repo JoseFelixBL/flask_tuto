@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS user;
 DROP TABLE IF EXISTS post;
 DROP TABLE IF EXISTS post_like;
+DROP VIEW IF EXISTS v_total_likes;
 CREATE TABLE IF NOT EXISTS user (
     id INTEGER primary key autoincrement,
     username Text unique not null,
@@ -21,3 +22,8 @@ CREATE TABLE IF NOT EXISTS post_like (
     foreign KEY (post_id) references post (id),
     foreign KEY (author_id) references user (id)
 );
+CREATE VIEW IF NOT EXISTS v_total_likes AS
+SELECT post_id,
+    COUNT(post_id) n_likes
+FROM post_like
+GROUP BY post_id

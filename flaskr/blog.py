@@ -14,10 +14,14 @@ bp = Blueprint('blog', __name__)
 def index():
     """Index: list of posts"""
     db = get_db()
+    # 'SELECT p.id, title, body, created, author_id, username'
+    # ' FROM post p JOIN user u ON p.author_id = u.id'
+    # ' ORDER BY created DESC'
     posts = db.execute(
-        'SELECT p.id, title, body, created, author_id, username'
-        ' FROM post p JOIN user u ON p.author_id = u.id'
-        ' ORDER BY created DESC'
+        'SELECT p.id, title, body, created, author_id, username, n_likes'
+        ' FROM post p'
+        ' JOIN user u ON p.author_id = u.id'
+        ' LEFT JOIN v_total_likes ON p.id = post_id'
     ).fetchall()
     return render_template('blog/index.html', posts=posts)
 

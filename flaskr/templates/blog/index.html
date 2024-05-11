@@ -26,6 +26,9 @@
         <input type="checkbox" id="like" name="like" />
         <label for="like">Like</label>
       {% endif %}
+      {% if post['n_likes'] is not none %}
+        <div class="post about">Likes: {{ post['n_likes'] }} </div>
+      {% endif %}
     </article>
     {% if not loop.last %}
       <hr>
