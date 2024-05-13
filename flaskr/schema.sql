@@ -1,8 +1,8 @@
 /*
  DROP TABLE IF EXISTS user;
  DROP TABLE IF EXISTS post;
- DROP TABLE IF EXISTS post_like;
  */
+DROP TABLE IF EXISTS post_like;
 DROP VIEW IF EXISTS v_total_likes;
 CREATE TABLE IF NOT EXISTS user (
     id INTEGER primary key autoincrement,
@@ -18,9 +18,10 @@ CREATE TABLE IF NOT EXISTS post (
     foreign key (author_id) references user (id)
 );
 CREATE TABLE IF NOT EXISTS post_like (
-    id INTEGER PRIMARY KEY autoincrement,
+    /* id INTEGER PRIMARY KEY autoincrement, */
     post_id INTEGER not null,
     author_id INTEGER not null,
+    PRIMARY KEY(post_id, author_id),
     foreign KEY (post_id) references post (id),
     foreign KEY (author_id) references user (id)
 );

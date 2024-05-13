@@ -19,5 +19,18 @@
       {% endif %}
     </header>
     <p class="body">{{ post['body'] }}</p>
+    {% if g.user['id'] is defined %}
+      <form method="post">
+        {% if post['pl_auth'] is not none %}
+          {# <input type="checkbox" id="like" name="like" checked /> #}
+          <input type="submit" value="Click to Unlike" />
+        {% else %}
+          {# <input type="checkbox" id="like" name="like" /> #}
+          <input type="submit" value="Click to Like" />
+        {% endif %}
+      </form>
+    {% endif %}
+    {# <label for="like">Likekkkk</label> #}
+
   </article>
 {% endblock %}

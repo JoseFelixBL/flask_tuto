@@ -22,14 +22,16 @@
         {% endif %}
       </header>
       <p class="body">{{ post['body'] }}</p>
-      {% if g.user['id'] is defined %}
-        {% if post['pl_auth'] is not none %}
-          <input type="checkbox" id="like" name="like" checked />
-        {% else %}
-          <input type="checkbox" id="like" name="like" />
-        {% endif %}
-        <label for="like">Like</label>
-      {% endif %}
+      {# comentado...
+        {% if g.user['id'] is defined %}
+          {% if post['pl_auth'] is not none %}
+            <input type="checkbox" id="like" name="like" checked />
+          {% else %}
+            <input type="checkbox" id="like" name="like" />
+          {% endif %}
+          <label for="like">Like</label>
+        {% endif %} 
+      ...hasta aquí #}
       {% if post['n_likes'] is not none %}
         <div class="post about">Likes: {{ post['n_likes'] }} </div>
       {% endif %}
