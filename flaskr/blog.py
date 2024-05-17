@@ -123,11 +123,11 @@ def update(id):
 def detail(id):
     """Detail post"""
     if g.user is None:
-        print('-'*20, 'g.user is None')
+       #  print('-'*20, 'g.user is None')
         post = get_post(id, check_author=False)
         return render_template('blog/detail.html', post=post)
     else:
-        print('-'*20, 'g.user is NOT None')
+       #  print('-'*20, 'g.user is NOT None')
         db = get_db()
         post = db.execute(
             """SELECT p.id, title, body, created, p.author_id, 
@@ -140,9 +140,9 @@ def detail(id):
         ).fetchone()
 
     if request.method == 'POST':
-        print('-'*20, 'en POST', post['pl_auth'])
+       #  print('-'*20, 'en POST', post['pl_auth'])
         if post['pl_auth'] is None:
-            print('-'*20, 'pl_auth is None')
+           #  print('-'*20, 'pl_auth is None')
             db = get_db()
             db.execute(
                 """INSERT INTO post_like (post_id, author_id)
@@ -151,7 +151,7 @@ def detail(id):
             )
             db.commit()
         else:
-            print('-'*20, 'pl_auth is NOT None ', post['pl_auth'])
+           #  print('-'*20, 'pl_auth is NOT None ', post['pl_auth'])
             db = get_db()
             db.execute(
                 """DELETE from post_like where post_id = ? and author_id = ?""",
@@ -160,7 +160,7 @@ def detail(id):
             db.commit()
         return redirect(url_for('blog.index'))
 
-    print('-'*20, 'render el GET')
+   #  print('-'*20, 'render el GET')
     return render_template('blog/detail.html', post=post)
 
 
